@@ -1,0 +1,190 @@
+
+
+<html>
+	<head>
+		<script>
+			var results = [];
+			var indexPrev, step , indexNext;
+			var eleResults = null;
+			
+			function generatePermitations(){
+				var arr = [""
+				,""
+				,"ABC"
+				,"DEF"
+				,"GHI"
+				,"JKL"
+				,"MNO"
+				,"PQRS"
+				,"TUV"
+				,"WXYZ"
+			];
+			var tempResults = [];
+			var temp = "";
+			var index = 0;
+			var currText = "";
+			
+			results = [];
+			indexPrev = 0;
+			step = 15;
+			indexNext = step;
+			
+			var phoneNumber = document.getElementById("phoneNumber").value;
+			if((phoneNumber.length != 7 && phoneNumber.length != 10) || isNaN(phoneNumber) == true){
+				alert("Phone Number should be in digits and shold have 7 or 10 numbers in it");
+				return;
+			}
+			
+			eleResults = document.getElementById("results");
+			eleResults.innerHTML = "Loading...";
+			
+			results.push(phoneNumber); 
+			
+			String.prototype.replaceAt=function(index, replacement) {
+				return this.substr(0, index) + replacement+ this.substr(index + replacement.length);
+			}
+			
+			for(var i = 0; i < phoneNumber.length; i++)
+			{
+				if(isNaN(phoneNumber[i]) == true) 
+				{
+					continue;
+				}
+				else
+				{
+					tempResults = results.slice(0);
+					for(var j = 0; j < tempResults.length; j++)
+					{
+						temp = tempResults[j];
+						index = parseInt(phoneNumber[i]);
+						currText = arr[index];
+						for(var k = 0; k < currText.length; k++){
+							temp = temp.replaceAt(i, currText.charAt(k));
+							results.push(temp);
+						}
+					}
+				}
+			}
+			
+			document.getElementById("totalCount").innerHTML = results.length;
+			
+			paginate();
+		}
+		
+		function paginate(){
+			eleResults = document.getElementById("results");
+			eleResults.innerHTML = "";
+			var prev = indexPrev, next = indexNext;			
+			while(prev < next){
+				eleResults.innerHTML += results[prev++] + "<br>";
+			}
+			
+			document.getElementById("backNumber").innerHTML = indexPrev + 1;
+			document.getElementById("nextNumber").innerHTML = indexNext;
+		}
+		
+		function populateData(state){
+			if(state == "next"){
+				if(indexNext + step < results.length){
+					indexPrev = indexNext;
+					indexNext += step;
+				}else 
+					if(indexNext != results.length){
+					indexPrev = indexNext; 
+					indexNext = results.length; 
+				}
+			}else{
+				if(indexPrev - step > 0){
+					indexNext = indexPrev;
+					indexPrev -= step;
+				}else if(indexPrev != 0){
+					indexNext = indexPrev; 
+					indexPrev = 0; 
+				}
+			}
+			paginate();
+		}
+		
+		</script>
+		<style>
+			#container{
+				width: 50%;
+				margin:0 auto;
+				border:1px solid lightgray;
+				text-align:center;
+				height:90%;
+			}
+			
+			#btnRun{
+				cursor:pointer;
+				border:1px solid gray;
+				border-radius:2px;
+				width:100px;
+				margin:0 auto;
+				font-weight:bolder;
+			}
+			
+			#resultsContainer{
+				height:280px;
+				overflow:auto;
+				border:1px solid gray;	
+				text-align:left;		
+				position:relative;
+			}
+			
+			#lblTotalCount{
+				text-align:left;
+				font-weight:bolder;
+			}
+			
+			.arrow{
+				font-weight:bolder; 
+				width:15px;
+				margin-left:20px;
+				float:left;
+				cursor:pointer;
+			}
+			
+			#arrowNumberContainer{
+				position:absolute; 
+				top:10px;
+				right:10px;
+				float:right;
+			}
+			
+			#arrowContainer{ 
+				position:absolute; 
+				right:10px;
+				bottom:10px;
+				float:right;
+				-webkit-user-select: none;
+			    -moz-user-select: none;
+			    -ms-user-select: none;
+			    user-select: none;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="container">
+			<h2>Generate AlphaNumeric Phone Numbers</h2>
+			<br>
+			<div>Enter Phone Number: <input type="text" id="phoneNumber" /></div>
+			<br>
+			<div onclick="generatePermitations()" id="btnRun">Run</div>
+			<br>
+			<br>
+			<div id="lblTotalCount">Total number of combinations: <span id="totalCount"></span></div>
+			<div id="resultsContainer">
+				<div  id="arrowNumberContainer">
+					<div id="backNumber" class="arrow">0</div>
+					<div  class="arrow" id="nextNumber">0</div>
+				</div>
+				<div id="results"></div>
+				<div id="arrowContainer">
+					<div id="back" class="arrow" onclick="populateData('prev');">&lt;&lt;</div>
+					<div id="back" class="arrow" onclick="populateData('next');">&gt;&gt;</div>
+				</div>				
+			</div>
+		</div>
+	</body>
+</html>
